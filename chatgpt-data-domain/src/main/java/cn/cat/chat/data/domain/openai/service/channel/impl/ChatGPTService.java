@@ -35,7 +35,7 @@ public class ChatGPTService implements OpenAiGroupService {
         // 1. 请求消息
         List<Message> messages = chatProcess.getMessages().stream()
                 .map(entity -> Message.builder()
-                        .role(Constants.Role.valueOf(entity.getRole()))
+                        .role(Constants.Role.valueOf(entity.getRole().toUpperCase()))
                         .content(entity.getContent())
                         .name(entity.getName())
                         .build())
