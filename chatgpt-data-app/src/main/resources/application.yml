@@ -1,0 +1,86 @@
+spring:
+  application:
+    name: chatgpt-ai
+  datasource:
+    username: root
+    password: 123
+    url: jdbc:mysql://192.168.136.129:3306/openai?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: Retail_HikariCP
+      minimum-idle: 15 #最小空闲连接数量
+      idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
+      maximum-pool-size: 25 #连接池最大连接数，默认是10
+      auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+      connection-test-query: SELECT 1
+    type: com.zaxxer.hikari.HikariDataSource
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+
+server:
+  port: 8091
+
+app:
+  config:
+    secret-key: cat-123
+    api-version: v1
+    limit-count: 20
+    white-list: wxid_bvadsakbxmd422
+
+# 线程池配置
+thread:
+  pool:
+    executor:
+      config:
+        core-pool-size: 20
+        max-pool-size: 50
+        keep-alive-time: 5000
+        block-queue-size: 5000
+        policy: CallerRunsPolicy
+
+chatgpt:
+  sdk:
+    config:
+      # 官网地址 https://github.com/chatanywhere/GPT_API_free
+      api-host: https://api.chatanywhere.tech/
+      api-key: sk-xC0rqZANqwYEedjMVgrbM3G5nPkJeTbACvGV3OQKaTSsx6ZU
+
+chatglm:
+  sdk:
+    config:
+      enable: true
+      api-host: https://open.bigmodel.cn/
+      api-secret-key: 2da3e6fab628094ec02e201d657413d8.e8vqnK8CNpbuXbQM
+
+alipay:
+  enabled: true
+  app_id: 9021000141621304
+  merchant_private_key: MIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCDbBbB9WQcqXGvucOaLdiqpA0qmBLINVPl9axLuNGwnnEGUGFFK7swOCxwM9rrtJ0YDPUqylLRip/ZHVI268Y5Uo8767aNCjTlqtaPNwvyEAYwIpnbGYmZAqbBvuDpAYWTf2OgitwCKzZnrTFcRQHqP3rVofAh870KchVE4C7Lna+96VPW9zJ4nnTG9thTjdVbP3u47nXp+E7M0+kRX7YfW9wkGvgnAsLcdloeiEa89ZrJeRmt7xoBlOW+/tCWvYxe6yQeMluZrIenFT/Yw9Y2QXE+ZTEnRtINYtcEu9kP7m7PEFmnQqbGYZhxuwLhT13sPfX2eATxZiqQgevHIyWrAgMBAAECggEAKNy9wrbi1sqUj5fJyrGAkaYKdfjsthVmrbSSSsT/ZdQNvnHVnKU5QYflwUlOQ0VYJvc4b4KS95YLl303Z94tNvuFj5L9oqLOya4xojvyWeRDmEnZ3rb1An9BjDImSixv9OmB95PVTlNTSi8ejtrh+oycS7pbKKNZXtsT4+N0iVhdUgg6Y5XTBKDoml2p+/FnmvFBoNRFqPzX1NhSuQFSRs5OUnPITR6iKtUl5geh/l+LTqsiCE0cqD6Y9o7kElcWdEk5+WTV4QHl+4xKZVLYfY9idHwX/unv5oJivVZ84rYDjEpBXrFkc91BfZZi4bv9+WxRi6V3uIH7o7BvUl9BOQKBgQDadA78H3JIKhTNbg1ET3vnifkZzSEtQAaaLt6yN4nY6G9Lcxwu4ibLg+uLGuUoFqjvD12OWXirManYak3nkTANdUQCcc2ijmBlrM9YPNe0NEwU433FiNj49p/U4qjXdoKr+Jw4jScZkwHMHzF9ClWV3lBvaWJKQKZWnyuJsANzJQKBgQCaAqm6+x53rLMfMlcP2ywHRCEZsbxxamF1E4wduG3prPXfdzDUFk0H/7EBDRcw0N6O+tCldLXj2Kiw0348KXTPyi+jy4o7qmAO3Qj8jobp4f/QKga7/347lCOD/VllHBq85DmwjI+r1sy92gHvXnVrXt5mYJLHURWbg1VQriBEjwKBgCc1m5bvQgDn5LH2pdTz+0ZUwmw6IFFR4516+ie8xjYzif5d29oiZ1oyBG4EVss6PfoipOUu8/SuRlD8y5zbt2dC/AEAUityKKU3PkQVL5Y9qMY7CtEQvfj5szhvsmRx9gRN7CROWY1CkJkFpElQOIpcy80jeivfrLtxeEwPVp8tAoGAVrWdHhr4YmSnTK8o+VJqjYS8Jh09fZVpXWMuBiWqLGAm5jPTF/WeVRyOaYsXPXK7e0CXbDAzoB6Bi1znu7OTgtHQ1KVqJIGeJ4Am6RrNtqx5PJgMxpfoWF7lSBDB3f1eyG6uVEovMY50I4e0gzJpZZQ6HuXMfc+XHMFqrUv7+t0CfztwRpAfav7FJJYCdiFtI87IG7gVIsHYChuwuAulP+6d7HLbEbdKrt3OESK+Wpz0aAiVF2khu5Awi8rFRiyDGFGYG/XjO7iUQVBld10MH035jY5S3NNikw9fXkUZaiVNGecFVdFsUlhjVr6zf49k53j5m+ZxVlH8Hv0EE5dVK8w=
+  alipay_public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlQ2OZpuo8Ow/lsD1Ym+AknJFg50KvK7j3LGXJqG9bw5Bu8s/msOd2wuQOgxp+w30AF+GBQ31a4rJyphTlyjR/YuHB32RqZYuUZi2Uy8ThB4oYxxG00cjH+j22480/zLDzOsbcqMWtEi+ul9Gv3gerJPxZ3sqTCiKR4eENMwfWr7U9BEKQWZgbl1QDz2kYMYTAzWcj1pJ/IFNgPAcKmTBTnOM+6npnXwNJTtLWdd1ZphhsB16MsbPB/N00lXM8Swc3xCtc9L5DSHVsUILuwLJpkEkidCajhxoflunFu3rDCb4qt05BW0vNtNBpgg2qUcaUVBaqQ+G4GntTRyr+d8vywIDAQAB
+  notify_url: https://catapp.hk.cpolar.io/api/v1/sale/pay_notify
+  return_url: https://catweb.ap.cpolar.io
+  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+
+wx:
+  config:
+    originalid: gh_58daf7bbfc9a
+    appid: wx9776ec1adc11f8f1
+    token: catai
+
+# Redis
+redis:
+  sdk:
+    config:
+      host: 192.168.136.129
+      port: 6379
+      pool-size: 10
+      min-idle-size: 5
+      idle-timeout: 30000
+      connect-timeout: 5000
+      retry-attempts: 3
+      retry-interval: 1000
+      ping-interval: 60000
+      keep-alive: true

@@ -1,0 +1,1 @@
+package cn.cat.chat.data.domain;
