@@ -23,7 +23,6 @@ public class OrderReplenishmentJob {
         try {
             List<String> orderIds = orderService.queryReplenishmentOrder();
             if (orderIds.isEmpty()) {
-                log.info("定时任务，订单补货不存在，查询 orderIds is null");
                 return;
             }
             for (String orderId : orderIds) {

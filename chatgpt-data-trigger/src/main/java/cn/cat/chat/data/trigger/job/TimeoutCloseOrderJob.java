@@ -25,7 +25,6 @@ public class TimeoutCloseOrderJob {
     public void exec() {
         List<String> orderIds = orderService.queryTimeoutCloseOrderList();
         if (orderIds.isEmpty()) {
-            log.info("定时任务，超时15分钟订单关闭，暂无超时未支付订单 orderIds is null");
             return;
         }
         for (String orderId : orderIds) {

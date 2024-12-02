@@ -35,7 +35,6 @@ public class NoPayNotifyOrderJob {
     public void exec() {
         List<String> orderIds = orderService.queryNoPayNotifyOrder();
         if (orderIds.isEmpty()) {
-            log.info("定时任务，订单支付状态更新，暂无未更新订单 orderId is null");
             return;
         }
         for (String orderId : orderIds) {

@@ -7,6 +7,7 @@ import cn.bugstack.chatgpt.domain.chat.ChatCompletionResponse;
 import cn.bugstack.chatgpt.domain.chat.Message;
 import cn.bugstack.chatgpt.session.OpenAiSession;
 import cn.cat.chat.data.domain.openai.model.aggregates.ChatProcessAggregate;
+import cn.cat.chat.data.domain.openai.model.entity.MessageEntity;
 import cn.cat.chat.data.domain.openai.service.channel.OpenAiGroupService;
 import cn.cat.chat.data.types.exception.ChatGPTException;
 import com.alibaba.fastjson.JSON;
@@ -35,7 +36,7 @@ public class ChatGPTService implements OpenAiGroupService {
         // 1. 请求消息
         List<Message> messages = chatProcess.getMessages().stream()
                 .map(entity -> Message.builder()
-                        .role(Constants.Role.valueOf(entity.getRole()))
+                        .role(Constants.Role.valueOf(entity.getRole().toUpperCase()))
                         .content(entity.getContent())
                         .name(entity.getName())
                         .build())
