@@ -1,9 +1,11 @@
 package cn.cat.chat.data.domain.order.service;
 
 import cn.cat.chat.data.domain.order.model.aggregates.CreateOrderAggregate;
+import cn.cat.chat.data.domain.order.model.entity.MarketPayDiscountEntity;
 import cn.cat.chat.data.domain.order.model.entity.OrderEntity;
 import cn.cat.chat.data.domain.order.model.entity.PayOrderEntity;
 import cn.cat.chat.data.domain.order.model.entity.ProductEntity;
+import cn.cat.chat.data.domain.order.model.valobj.MarketTypeVO;
 import cn.cat.chat.data.domain.order.model.valobj.OrderStatusVO;
 import cn.cat.chat.data.domain.order.model.valobj.PayStatusVO;
 import cn.cat.chat.data.domain.order.model.valobj.PayTypeVO;
@@ -22,6 +24,7 @@ import java.util.List;
 
 @Service
 public class OrderService extends AbstractOrderService {
+
     @Value("${alipay.notify_url}")
     private String notifyUrl;
     @Value("${alipay.return_url}")
@@ -30,7 +33,7 @@ public class OrderService extends AbstractOrderService {
     private AlipayClient alipayClient;
 
     @Override
-    protected OrderEntity doSaveOrder(String openid, ProductEntity productEntity) {
+    protected OrderEntity doSaveOrder(String openid, int marketType, ProductEntity productEntity) {
         OrderEntity orderEntity = new OrderEntity();
         // 数据库有幂等拦截，如果有重复的订单ID会报错主键冲突。如果是公司里一般会有专门的雪花算法UUID服务
         orderEntity.setOrderId(RandomStringUtils.randomNumeric(12));
@@ -38,6 +41,7 @@ public class OrderService extends AbstractOrderService {
         orderEntity.setOrderStatus(OrderStatusVO.CREATE);
         orderEntity.setTotalAmount(productEntity.getPrice());
         orderEntity.setPayTypeVO(PayTypeVO.ALIPAY);
+        orderEntity.setMarketType(marketType);
         // 聚合信息
         CreateOrderAggregate aggregate = CreateOrderAggregate.builder()
                 .openid(openid)
@@ -51,7 +55,15 @@ public class OrderService extends AbstractOrderService {
     }
 
     @Override
-    protected PayOrderEntity doPrepayOrder(String openid, String orderId, String productName, BigDecimal totalAmount) {
+    protected PayOrderEntity doPrepayOrder(String userId, String productName, String orderId, BigDecimal totalAmount) throws AlipayApiException {
+        return doPrepayOrder(userId, productName, orderId, totalAmount, null);
+    }
+
+    @Override
+    protected PayOrderEntity doPrepayOrder(String openid, String productName, String orderId, BigDecimal totalAmount, MarketPayDiscountEntity marketPayDiscountEntity) {
+        // 支付金额
+        BigDecimal payAmount = null == marketPayDiscountEntity ? totalAmount : marketPayDiscountEntity.getPayPrice();
+
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         request.setNotifyUrl(notifyUrl);
         request.setReturnUrl(returnUrl);
@@ -72,6 +84,11 @@ public class OrderService extends AbstractOrderService {
                     .payStatus(PayStatusVO.WAIT)
                     .build();
 
+            // 营销信息
+            payOrderEntity.setMarketType(null == marketPayDiscountEntity ? MarketTypeVO.NO_MARKET.getCode() : MarketTypeVO.GROUP_BUY_MARKET.getCode());
+            payOrderEntity.setMarketDeductionAmount(null == marketPayDiscountEntity ? BigDecimal.ZERO : marketPayDiscountEntity.getDeductionPrice());
+            payOrderEntity.setPayAmount(payAmount);
+
             // 更新订单支付信息
             orderRepository.updateOrderPayInfo(payOrderEntity);
             return payOrderEntity;
@@ -79,6 +96,11 @@ public class OrderService extends AbstractOrderService {
         } catch (AlipayApiException e) {
             throw new RuntimeException("支付宝支付失败");
         }
+    }
+
+    @Override
+    protected MarketPayDiscountEntity lockMarketPayOrder(String userId, String teamId, Long activityId, String productId, String orderId) {
+        return productPort.lockMarketPayOrder(userId, teamId, activityId, productId, orderId);
     }
 
     @Override
@@ -120,4 +142,5 @@ public class OrderService extends AbstractOrderService {
     public List<ProductEntity> queryProductList() {
         return orderRepository.queryProductList();
     }
+
 }

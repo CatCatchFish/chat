@@ -1,17 +1,17 @@
-package cn.cat.chat.data.infrastructure.repository;
+package cn.cat.chat.data.infrastructure.adapter.repository;
 
 import cn.cat.chat.data.domain.openai.model.valobj.UserAccountStatusVO;
 import cn.cat.chat.data.domain.order.model.aggregates.CreateOrderAggregate;
 import cn.cat.chat.data.domain.order.model.entity.*;
 import cn.cat.chat.data.domain.order.model.valobj.OrderStatusVO;
 import cn.cat.chat.data.domain.order.model.valobj.PayStatusVO;
-import cn.cat.chat.data.domain.order.repository.IOrderRepository;
+import cn.cat.chat.data.domain.order.adapter.repository.IOrderRepository;
 import cn.cat.chat.data.infrastructure.dao.IOpenAIOrderDao;
 import cn.cat.chat.data.infrastructure.dao.IOpenAIProductDao;
 import cn.cat.chat.data.infrastructure.dao.IUserAccountDao;
-import cn.cat.chat.data.infrastructure.po.OpenAIOrder;
-import cn.cat.chat.data.infrastructure.po.OpenAIProduct;
-import cn.cat.chat.data.infrastructure.po.UserAccount;
+import cn.cat.chat.data.infrastructure.dao.po.OpenAIOrder;
+import cn.cat.chat.data.infrastructure.dao.po.OpenAIProduct;
+import cn.cat.chat.data.infrastructure.dao.po.UserAccount;
 import cn.cat.chat.data.types.enums.ChatGLMModel;
 import cn.cat.chat.data.types.enums.OpenAIProductEnableModel;
 import jakarta.annotation.Resource;
@@ -50,6 +50,9 @@ public class OrderRepository implements IOrderRepository {
                 .totalAmount(orderRes.getTotalAmount())
                 .payUrl(orderRes.getPayUrl())
                 .payStatus(PayStatusVO.get(orderRes.getPayStatus()))
+                .marketDeductionAmount(orderRes.getMarketDeductionAmount())
+                .payAmount(orderRes.getPayAmount())
+                .marketType(orderRes.getMarketType())
                 .build();
     }
 
@@ -82,6 +85,9 @@ public class OrderRepository implements IOrderRepository {
         openAIOrder.setTotalAmount(order.getTotalAmount());
         openAIOrder.setPayType(order.getPayTypeVO().getCode());
         openAIOrder.setPayStatus(PayStatusVO.WAIT.getCode());
+        openAIOrder.setMarketDeductionAmount(BigDecimal.ZERO);
+        openAIOrder.setPayAmount(product.getPrice());
+        openAIOrder.setMarketType(order.getMarketType());
         openAIOrderDao.insert(openAIOrder);
     }
 
@@ -92,6 +98,9 @@ public class OrderRepository implements IOrderRepository {
         order.setOpenid(payOrderEntity.getOpenid());
         order.setPayUrl(payOrderEntity.getPayUrl());
         order.setPayStatus(payOrderEntity.getPayStatus().getCode());
+        order.setMarketType(payOrderEntity.getMarketType());
+        order.setMarketDeductionAmount(payOrderEntity.getMarketDeductionAmount());
+        order.setPayAmount(payOrderEntity.getPayAmount());
         openAIOrderDao.updateOrderPayInfo(order);
     }
 

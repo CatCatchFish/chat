@@ -1,4 +1,4 @@
-package cn.cat.chat.data.domain.order.repository;
+package cn.cat.chat.data.domain.order.adapter.repository;
 
 import cn.cat.chat.data.domain.order.model.aggregates.CreateOrderAggregate;
 import cn.cat.chat.data.domain.order.model.entity.PayOrderEntity;

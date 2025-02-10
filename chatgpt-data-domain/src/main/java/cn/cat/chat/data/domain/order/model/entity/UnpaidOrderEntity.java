@@ -41,5 +41,17 @@ public class UnpaidOrderEntity {
      * 支付状态；0-等待支付、1-支付完成、2-支付失败、3-放弃支付
      */
     private PayStatusVO payStatus;
+    /**
+     * discountAmount；优惠金额
+     */
+    private BigDecimal marketDeductionAmount;
+    /**
+     * 支付金额；支付完成后，实际支付的金额
+     */
+    private BigDecimal payAmount;
+    /**
+     * 营销类型；0-普通营销、1-促销营销
+     */
+    private Integer marketType;
 
 }

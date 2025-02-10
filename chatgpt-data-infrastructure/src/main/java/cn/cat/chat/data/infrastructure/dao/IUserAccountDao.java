@@ -1,6 +1,6 @@
 package cn.cat.chat.data.infrastructure.dao;
 
-import cn.cat.chat.data.infrastructure.po.UserAccount;
+import cn.cat.chat.data.infrastructure.dao.po.UserAccount;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

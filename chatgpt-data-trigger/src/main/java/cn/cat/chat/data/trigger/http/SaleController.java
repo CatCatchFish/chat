@@ -4,7 +4,9 @@ import cn.cat.chat.data.domain.auth.service.IAuthService;
 import cn.cat.chat.data.domain.order.model.entity.PayOrderEntity;
 import cn.cat.chat.data.domain.order.model.entity.ProductEntity;
 import cn.cat.chat.data.domain.order.model.entity.ShopCartEntity;
+import cn.cat.chat.data.domain.order.model.valobj.MarketTypeVO;
 import cn.cat.chat.data.domain.order.service.IOrderService;
+import cn.cat.chat.data.trigger.http.dto.CreatePayRequestDTO;
 import cn.cat.chat.data.trigger.http.dto.SaleProductDTO;
 import cn.cat.chat.data.types.common.Constants;
 import cn.cat.chat.data.types.model.Response;
@@ -13,6 +15,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RTopic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -89,7 +92,7 @@ public class SaleController {
     }
 
     @RequestMapping(value = "create_pay_order", method = RequestMethod.POST)
-    public Response<String> createParOrder(@RequestHeader("Authorization") String token, @RequestParam Integer productId) {
+    public Response<String> createParOrder(@RequestHeader("Authorization") String token, @RequestBody CreatePayRequestDTO createPayRequestDTO) {
         try {
             boolean success = authService.checkToken(token);
             if (!success) {
@@ -100,12 +103,23 @@ public class SaleController {
             }
             // 2. Token 解析
             String openid = authService.openid(token);
-            assert null != openid;
+            Integer productId = createPayRequestDTO.getProductId();
+            String teamId = createPayRequestDTO.getTeamId();
+            Long activityId = createPayRequestDTO.getActivityId();
+            Integer marketType = createPayRequestDTO.getMarketType();
+
+            if (StringUtils.isEmpty(openid) || null == productId || activityId == null || marketType == null) {
+                throw new RuntimeException("参数错误");
+            }
             log.info("用户商品下单，根据商品ID创建支付单开始 openid:{} productId:{}", openid, productId);
 
             ShopCartEntity shopCartEntity = ShopCartEntity.builder()
                     .openid(openid)
-                    .productId(productId).build();
+                    .productId(productId)
+                    .teamId(teamId)
+                    .activityId(activityId)
+                    .marketType(MarketTypeVO.valueOf(marketType))
+                    .build();
 
             PayOrderEntity payOrder = orderService.createOrder(shopCartEntity);
             log.info("用户商品下单，根据商品ID创建支付单完成 openid: {} productId: {} orderPay: {}", openid, productId, payOrder.toString());

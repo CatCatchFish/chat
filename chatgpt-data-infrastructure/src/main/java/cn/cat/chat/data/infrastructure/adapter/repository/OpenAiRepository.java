@@ -1,10 +1,10 @@
-package cn.cat.chat.data.infrastructure.repository;
+package cn.cat.chat.data.infrastructure.adapter.repository;
 
 import cn.cat.chat.data.domain.openai.model.entity.UserAccountQuotaEntity;
 import cn.cat.chat.data.domain.openai.model.valobj.UserAccountStatusVO;
 import cn.cat.chat.data.domain.openai.repository.IOpenAiRepository;
 import cn.cat.chat.data.infrastructure.dao.IUserAccountDao;
-import cn.cat.chat.data.infrastructure.po.UserAccount;
+import cn.cat.chat.data.infrastructure.dao.po.UserAccount;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 

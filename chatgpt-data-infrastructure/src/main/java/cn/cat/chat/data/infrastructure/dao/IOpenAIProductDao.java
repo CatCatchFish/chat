@@ -1,6 +1,6 @@
 package cn.cat.chat.data.infrastructure.dao;
 
-import cn.cat.chat.data.infrastructure.po.OpenAIProduct;
+import cn.cat.chat.data.infrastructure.dao.po.OpenAIProduct;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

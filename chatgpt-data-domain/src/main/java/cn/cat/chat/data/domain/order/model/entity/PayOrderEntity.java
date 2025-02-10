@@ -6,11 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PayOrderEntity {
+
     /**
      * 用户ID
      */
@@ -27,15 +30,17 @@ public class PayOrderEntity {
      * 支付状态；0-等待支付、1-支付完成、2-支付失败、3-放弃支付
      */
     private PayStatusVO payStatus;
-
-    @Override
-    public String toString() {
-        return "PayOrderEntity{" +
-                "openid='" + openid + '\'' +
-                ", orderId='" + orderId + '\'' +
-                ", payUrl='" + payUrl + '\'' +
-                ", payStatus=" + payStatus.getCode() + ": " + payStatus.getDesc() +
-                '}';
-    }
+    /**
+     * 营销类型；0无营销、1拼团营销
+     */
+    private Integer marketType;
+    /**
+     * 营销金额；优惠金额
+     */
+    private BigDecimal marketDeductionAmount;
+    /**
+     * 支付金额；实际支付金额
+     */
+    private BigDecimal payAmount;
 
 }

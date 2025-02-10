@@ -1,4 +1,4 @@
-package cn.cat.chat.data.infrastructure.repository;
+package cn.cat.chat.data.infrastructure.adapter.repository;
 
 import cn.cat.chat.data.domain.auth.repository.IAuthRepository;
 import cn.cat.chat.data.infrastructure.redis.IRedisService;

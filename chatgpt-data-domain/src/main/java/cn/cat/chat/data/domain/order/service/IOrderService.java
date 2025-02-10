@@ -14,13 +14,14 @@ import java.util.List;
  * 订单服务接口
  */
 public interface IOrderService {
+
     /**
      * 用户下单，通过购物车信息，返回下单后的支付单
      *
      * @param shopCartEntity 简单购物车
      * @return 支付单实体对象
      */
-    PayOrderEntity createOrder(ShopCartEntity shopCartEntity);
+    PayOrderEntity createOrder(ShopCartEntity shopCartEntity) throws Exception;
 
     /**
      * 变更；订单支付成功
@@ -66,4 +67,5 @@ public interface IOrderService {
      * 查询商品列表
      */
     List<ProductEntity> queryProductList();
+
 }

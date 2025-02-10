@@ -1,4 +1,4 @@
-package cn.cat.chat.data.infrastructure.po;
+package cn.cat.chat.data.infrastructure.dao.po;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,6 +73,15 @@ public class OpenAIOrder {
      * 支付时间
      */
     private Date payTime;
+    /**
+     * 营销类型；0无营销、1拼团营销
+     */
+    private Integer marketType;
+    /**
+     * 营销金额；优惠金额
+     */
+    private BigDecimal marketDeductionAmount;
+
     /**
      * 创建时间
      */

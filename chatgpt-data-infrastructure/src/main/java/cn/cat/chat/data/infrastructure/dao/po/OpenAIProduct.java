@@ -1,4 +1,4 @@
-package cn.cat.chat.data.infrastructure.po;
+package cn.cat.chat.data.infrastructure.dao.po;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

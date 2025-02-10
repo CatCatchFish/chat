@@ -29,6 +29,11 @@ app:
     api-version: v1
     limit-count: 20
     white-list: wxid_bvadsakbxmd422
+    group-buy-market:
+      api-url: http://127.0.0.1:8093
+      notify-url: http://127.0.0.1:8091/api/v1/test/group_buy_notify
+      source: s01
+      channel: c01
 
 # 线程池配置
 thread:

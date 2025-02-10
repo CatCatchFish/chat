@@ -15,6 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderEntity {
+
     /**
      * 订单编号
      */
@@ -35,4 +36,17 @@ public class OrderEntity {
      * 支付类型 0-支付宝 ... 待扩展
      */
     private PayTypeVO payTypeVO;
+    /**
+     * 营销类型；0无营销、1拼团营销
+     */
+    private Integer marketType;
+    /**
+     * 营销金额；优惠金额
+     */
+    private BigDecimal marketDeductionAmount;
+    /**
+     * 支付金额；实际支付金额
+     */
+    private BigDecimal payAmount;
+
 }
