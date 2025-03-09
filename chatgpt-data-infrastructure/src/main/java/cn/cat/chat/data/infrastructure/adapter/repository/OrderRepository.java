@@ -12,8 +12,10 @@ import cn.cat.chat.data.infrastructure.dao.IUserAccountDao;
 import cn.cat.chat.data.infrastructure.dao.po.OpenAIOrder;
 import cn.cat.chat.data.infrastructure.dao.po.OpenAIProduct;
 import cn.cat.chat.data.infrastructure.dao.po.UserAccount;
+import cn.cat.chat.data.infrastructure.event.EventPublisher;
 import cn.cat.chat.data.types.enums.ChatGLMModel;
 import cn.cat.chat.data.types.enums.OpenAIProductEnableModel;
+import cn.cat.types.exception.AppException;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -27,12 +29,15 @@ import java.util.List;
 
 @Repository
 public class OrderRepository implements IOrderRepository {
+
     @Resource
     private IOpenAIOrderDao openAIOrderDao;
     @Resource
     private IOpenAIProductDao openAIProductDao;
     @Resource
     private IUserAccountDao userAccountDao;
+    @Resource
+    private EventPublisher publisher;
 
     @Override
     public UnpaidOrderEntity queryUnpaidOrder(ShopCartEntity shopCartEntity) {
@@ -110,9 +115,9 @@ public class OrderRepository implements IOrderRepository {
         order.setOrderId(orderId);
         order.setTransactionId(transactionId);
         order.setPayTime(payTime);
-        // payAmount
         order.setPayAmount(totalAmount);
         int count = openAIOrderDao.changeOrderPaySuccess(order);
+        publisher.publish("payback_call", orderId);
         return count == 1;
     }
 
@@ -207,4 +212,39 @@ public class OrderRepository implements IOrderRepository {
         }
         return productEntityList;
     }
+
+    @Override
+    public OrderEntity queryOrderByOrderId(String orderId) {
+        OpenAIOrder payOrder = openAIOrderDao.queryOrderByOrderId(orderId);
+        if (null == orderId) return null;
+
+        return OrderEntity.builder()
+                .openid(payOrder.getOpenid())
+                .productId(payOrder.getProductId())
+                .productName(payOrder.getProductName())
+                .orderId(payOrder.getOrderId())
+                .orderTime(payOrder.getOrderTime())
+                .totalAmount(payOrder.getTotalAmount())
+                .payUrl(payOrder.getPayUrl())
+                .marketType(payOrder.getMarketType())
+                .marketDeductionAmount(payOrder.getMarketDeductionAmount())
+                .payAmount(payOrder.getPayAmount())
+                .build();
+    }
+
+    @Override
+    public void changeMarketOrderPaySuccess(String orderId) {
+        OpenAIOrder order = new OpenAIOrder();
+        order.setOrderId(orderId);
+        openAIOrderDao.changeMarketOrderPaySuccess(orderId);
+    }
+
+    @Override
+    public void changeOrderMarketSettlement(List<String> outTradeNoList) {
+        openAIOrderDao.changeOrderMarketSettlement(outTradeNoList);
+        outTradeNoList.forEach(outTradeNo -> {
+            publisher.publish("payback_call", outTradeNo);
+        });
+    }
+
 }

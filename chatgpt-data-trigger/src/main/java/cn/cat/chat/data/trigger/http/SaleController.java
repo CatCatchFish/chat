@@ -1,5 +1,6 @@
 package cn.cat.chat.data.trigger.http;
 
+import cn.cat.api.dto.NotifyRequestDTO;
 import cn.cat.chat.data.domain.auth.service.IAuthService;
 import cn.cat.chat.data.domain.order.model.entity.PayOrderEntity;
 import cn.cat.chat.data.domain.order.model.entity.ProductEntity;
@@ -35,8 +36,6 @@ import java.util.Map;
 public class SaleController {
     @Value("${alipay.alipay_public_key}")
     private String alipayPublicKey;
-    @Resource(name = "payback_call")
-    private RTopic topic;
     @Resource
     private IOrderService orderService;
     @Resource
@@ -44,10 +43,17 @@ public class SaleController {
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    @RequestMapping(value = "pay_back_call", method = RequestMethod.POST)
-    public String payBackCall(String tradeNo) {
-        topic.publish(tradeNo);
-        return "success";
+    @RequestMapping(value = "group_buy_notify", method = RequestMethod.POST)
+    public String groupBuyNotify(@RequestBody NotifyRequestDTO requestDTO) {
+        log.info("拼团回调，组队完成，结算开始 {}", JSON.toJSONString(requestDTO));
+        try {
+            // 营销结算
+            orderService.changeOrderMarketSettlement(requestDTO.getOutTradeNoList());
+            return "success";
+        } catch (Exception e) {
+            log.info("拼团回调，组队完成，结算失败 {}", JSON.toJSONString(requestDTO));
+            return "error";
+        }
     }
 
     @RequestMapping(value = "query_product_list", method = RequestMethod.GET)
@@ -172,7 +178,6 @@ public class SaleController {
                     // 更新订单未已支付
                     orderService.changeOrderPaySuccess(tradeNo, alipayTradeNo, new BigDecimal(total).setScale(2, RoundingMode.HALF_UP), dateFormat.parse(gmtPayment));
                     // 推送消息【自己的业务场景中可以使用MQ消息】
-                    topic.publish(tradeNo);
                 }
             }
         } catch (Exception e) {

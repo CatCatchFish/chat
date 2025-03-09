@@ -2,6 +2,8 @@ package cn.cat.chat.data.infrastructure.gateway;
 
 import cn.cat.api.dto.LockMarketPayOrderRequestDTO;
 import cn.cat.api.dto.LockMarketPayOrderResponseDTO;
+import cn.cat.api.dto.SettlementMarketPayOrderRequestDTO;
+import cn.cat.api.dto.SettlementMarketPayOrderResponseDTO;
 import cn.cat.api.response.Response;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -20,5 +22,8 @@ public interface IGroupBuyMarketService {
      */
     @POST("api/v1/gbm/trade/lock_market_pay_order")
     Call<Response<LockMarketPayOrderResponseDTO>> lockMarketPayOrder(@Body LockMarketPayOrderRequestDTO requestDTO);
+
+    @POST("api/v1/gbm/trade/settlement_market_pay_order")
+    Call<Response<SettlementMarketPayOrderResponseDTO>> settlementMarketPayOrder(SettlementMarketPayOrderRequestDTO requestDTO);
 
 }

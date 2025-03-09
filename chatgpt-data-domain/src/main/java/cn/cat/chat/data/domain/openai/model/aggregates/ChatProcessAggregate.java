@@ -24,7 +24,7 @@ public class ChatProcessAggregate {
     /**
      * 默认模型
      */
-    private String model = Model.GLM_3_5_TURBO.getCode();
+    private String model = Model.GLM_4V_Flash.getCode();
     /**
      * 问题描述
      */
@@ -44,7 +44,7 @@ public class ChatProcessAggregate {
 
     public GenerativeModelVO getGenerativeModelVO() {
         return switch (this.model) {
-            case "dall-e-2", "dall-e-3", "cogview-3" -> GenerativeModelVO.IMAGE;
+            case "cogview-3-flash", "cogview-3" -> GenerativeModelVO.IMAGE;
             default -> GenerativeModelVO.TEXT;
         };
     }

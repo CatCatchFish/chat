@@ -3,7 +3,6 @@ package cn.cat.chat.data.domain.openai.service.channel.model.impl;
 import cn.bugstack.chatglm.model.ChatCompletionRequest;
 import cn.bugstack.chatglm.model.ChatCompletionResponse;
 import cn.bugstack.chatglm.model.Model;
-import cn.bugstack.chatglm.model.Role;
 import cn.bugstack.chatglm.session.OpenAiSession;
 import cn.cat.chat.data.domain.openai.model.aggregates.ChatProcessAggregate;
 import cn.cat.chat.data.domain.openai.service.channel.model.IGenerativeModelService;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class TextGenerativeModelServiceImpl implements IGenerativeModelService {
-    @Resource
+    @Resource(name = "chatGLMOpenAiSession")
     protected OpenAiSession chatGlMOpenAiSession;
 
 

@@ -19,4 +19,5 @@ public class RedisTopicListener implements MessageListener<String> {
         log.info("支付完成，发货并记录，开始。订单：{}", tradeNo);
         orderService.deliverGoods(tradeNo);
     }
+
 }

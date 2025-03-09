@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class ImageGenerativeModelServiceImpl implements IGenerativeModelService {
-    @Resource
+    @Resource(name = "chatGLMOpenAiSession")
     protected OpenAiSession chatGlMOpenAiSession;
 
     @Override

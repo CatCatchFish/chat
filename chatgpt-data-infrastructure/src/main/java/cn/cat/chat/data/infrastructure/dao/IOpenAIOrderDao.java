@@ -7,6 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface IOpenAIOrderDao {
+
     OpenAIOrder queryUnpaidOrder(OpenAIOrder order);
 
     void insert(OpenAIOrder order);
@@ -26,4 +27,11 @@ public interface IOpenAIOrderDao {
     List<String> queryTimeoutCloseOrderList();
 
     boolean changeOrderClose(String orderId);
+
+    OpenAIOrder queryOrderByOrderId(String orderId);
+
+    void changeMarketOrderPaySuccess(String orderId);
+
+    void changeOrderMarketSettlement(List<String> outTradeNoList);
+
 }

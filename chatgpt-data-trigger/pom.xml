@@ -31,12 +31,13 @@
             <artifactId>chatglm-sdk-java</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
+            <groupId>cn.cat</groupId>
+            <artifactId>chatgpt-data-domain</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>cn.cat</groupId>
-            <artifactId>chatgpt-data-domain</artifactId>
+            <artifactId>group-buy-market-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

@@ -17,6 +17,18 @@ import java.util.Date;
 public class OrderEntity {
 
     /**
+     * 用户openid
+     */
+    private String openid;
+    /**
+     * 商品id
+     */
+    private Integer productId;
+    /**
+     * 商品名称
+     */
+    private String productName;
+    /**
      * 订单编号
      */
     private String orderId;
@@ -36,6 +48,10 @@ public class OrderEntity {
      * 支付类型 0-支付宝 ... 待扩展
      */
     private PayTypeVO payTypeVO;
+    /**
+     * 回调地址
+     */
+    private String payUrl;
     /**
      * 营销类型；0无营销、1拼团营销
      */

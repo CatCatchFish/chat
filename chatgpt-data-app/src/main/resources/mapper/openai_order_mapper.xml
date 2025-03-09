@@ -58,7 +58,8 @@
           AND pay_time is null
     </update>
 
-    <select id="queryUnpaidOrder" parameterType="cn.cat.chat.data.infrastructure.dao.po.OpenAIOrder" resultMap="dataMap">
+    <select id="queryUnpaidOrder" parameterType="cn.cat.chat.data.infrastructure.dao.po.OpenAIOrder"
+            resultMap="dataMap">
         SELECT order_id,
                product_name,
                pay_url,
@@ -136,6 +137,41 @@
             update_time  = now()
         WHERE order_id = #{orderId}
           AND pay_status = 0
+    </update>
+
+    <select id="queryOrderByOrderId" parameterType="java.lang.String" resultMap="dataMap">
+        select openid,
+               product_id,
+               product_name,
+               order_id,
+               order_time,
+               total_amount,
+               order_status,
+               pay_url,
+               market_type,
+               market_deduction_amount,
+               pay_amount
+        from openai_order
+        where order_id = #{orderId}
+    </select>
+
+    <update id="changeMarketOrderPaySuccess" parameterType="java.lang.String">
+        UPDATE openai_order
+        SET order_status = 1,
+            pay_status   = 1,
+            pay_time     = now(),
+            update_time  = now()
+        where order_id = #{orderId}
+    </update>
+
+    <update id="changeOrderMarketSettlement" parameterType="java.util.List">
+        update openai_order set
+        order_status = 2,
+        update_time = now()
+        where order_id in
+        <foreach item="orderId" collection="outTradeNoList" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
     </update>
 
 </mapper>

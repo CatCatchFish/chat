@@ -68,4 +68,6 @@ public interface IOrderService {
      */
     List<ProductEntity> queryProductList();
 
+    void changeOrderMarketSettlement(List<String> outTradeNoList);
+
 }

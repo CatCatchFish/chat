@@ -1,5 +1,6 @@
 package cn.cat.chat.data.domain.order.service;
 
+import cn.cat.chat.data.domain.order.adapter.port.IProductPort;
 import cn.cat.chat.data.domain.order.model.aggregates.CreateOrderAggregate;
 import cn.cat.chat.data.domain.order.model.entity.MarketPayDiscountEntity;
 import cn.cat.chat.data.domain.order.model.entity.OrderEntity;
@@ -15,6 +16,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.redisson.api.RTopic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,8 @@ public class OrderService extends AbstractOrderService {
     private String returnUrl;
     @Resource
     private AlipayClient alipayClient;
+    @Resource
+    private IProductPort port;
 
     @Override
     protected OrderEntity doSaveOrder(String openid, int marketType, ProductEntity productEntity) {
@@ -105,6 +109,12 @@ public class OrderService extends AbstractOrderService {
 
     @Override
     public boolean changeOrderPaySuccess(String orderId, String transactionId, BigDecimal totalAmount, Date payTime) {
+        OrderEntity orderEntity = orderRepository.queryOrderByOrderId(orderId);
+        if (null == orderEntity) return false;
+        if (MarketTypeVO.GROUP_BUY_MARKET.getCode().equals(orderEntity.getMarketType())) {
+            orderRepository.changeMarketOrderPaySuccess(orderId);
+            port.settlementMarketPayOrder(orderEntity.getOpenid(), orderId, payTime);
+        }
         return orderRepository.changeOrderPaySuccess(orderId, transactionId, totalAmount, payTime);
     }
 
@@ -141,6 +151,11 @@ public class OrderService extends AbstractOrderService {
     @Override
     public List<ProductEntity> queryProductList() {
         return orderRepository.queryProductList();
+    }
+
+    @Override
+    public void changeOrderMarketSettlement(List<String> outTradeNoList) {
+        orderRepository.changeOrderMarketSettlement(outTradeNoList);
     }
 
 }

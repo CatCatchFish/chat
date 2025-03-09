@@ -1,10 +1,7 @@
 package cn.cat.chat.data.domain.order.adapter.repository;
 
 import cn.cat.chat.data.domain.order.model.aggregates.CreateOrderAggregate;
-import cn.cat.chat.data.domain.order.model.entity.PayOrderEntity;
-import cn.cat.chat.data.domain.order.model.entity.ProductEntity;
-import cn.cat.chat.data.domain.order.model.entity.ShopCartEntity;
-import cn.cat.chat.data.domain.order.model.entity.UnpaidOrderEntity;
+import cn.cat.chat.data.domain.order.model.entity.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,6 +11,7 @@ import java.util.List;
  * @description 订单仓储接口
  */
 public interface IOrderRepository {
+
     // 查询未支付订单
     UnpaidOrderEntity queryUnpaidOrder(ShopCartEntity shopCartEntity);
 
@@ -49,4 +47,11 @@ public interface IOrderRepository {
 
     // 查询所有商品
     List<ProductEntity> queryProductList();
+
+    OrderEntity queryOrderByOrderId(String orderId);
+
+    void changeMarketOrderPaySuccess(String orderId);
+
+    void changeOrderMarketSettlement(List<String> outTradeNoList);
+
 }
